@@ -4,9 +4,9 @@ $basedir = dirname(__FILE__);
 require_once $basedir . DIRECTORY_SEPARATOR . "slide_show_common.php";
 
 #$csvFile = "test.csv";
-$logoUrl = "http://screenshot.unixpin.com/image2video/uploads/1540752951c5b240475d90daeb5e552f96a92a4f4ef39d07aa/f92aa8e16e80d7d8e02c9c6a0b33948478650483.png";
-$audioUrl = "http://screenshot.unixpin.com/image2video/uploads/1540752951c5b240475d90daeb5e552f96a92a4f4ef39d07aa/0f404cbc77773e8e6dfe93022f1e913d2daa583f.mp3";
-$splashUrl = "http://screenshot.unixpin.com/image2video/uploads/1540752951c5b240475d90daeb5e552f96a92a4f4ef39d07aa/11a98349fb9e66f12a7a9cd0255ea9822d85ea5a.jpeg";
+$logoUrl = "http://www.tldw.io/image2video/uploads/1541601782d3fa63b793871f791c8db512207f4312b716b389/f92aa8e16e80d7d8e02c9c6a0b33948478650483.png";
+$audioUrl = "http://www.tldw.io/image2video/uploads/1541601782d3fa63b793871f791c8db512207f4312b716b389/b36dc81055cb51f52d71c198613cb811304dc971.mp3";
+$splashUrl = "http://www.tldw.io/image2video/uploads/1541601782d3fa63b793871f791c8db512207f4312b716b389/11a98349fb9e66f12a7a9cd0255ea9822d85ea5a.jpeg";
 
 ### read command line parameters
 $shortopts  = "";
@@ -29,7 +29,8 @@ if( !$csvFile ) {
 
 
 
-$mainiUrl = 'http://screenshot.unixpin.com/image2video';
+#$mainiUrl = 'http://screenshot.unixpin.com/image2video';
+$mainiUrl = 'http://www.tldw.io/image2video';
 $apiUrl = "$mainiUrl/api";
 $apiKey = '315820';
 $dt = date("U");
