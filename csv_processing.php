@@ -6,7 +6,7 @@ require_once $basedir . DIRECTORY_SEPARATOR . "slide_show_common.php";
 $logoUrl = "http://ec2-54-212-58-90.us-west-2.compute.amazonaws.com/image2video/uploads/15417092127723a243f0e122a400c54eaf6a9bda7c65095387/f92aa8e16e80d7d8e02c9c6a0b33948478650483.png";
 $audioUrl = "http://www.tldw.io/image2video/uploads/1541601782d3fa63b793871f791c8db512207f4312b716b389/b36dc81055cb51f52d71c198613cb811304dc971.mp3";
 $splashUrl = "http://ec2-54-212-58-90.us-west-2.compute.amazonaws.com/image2video/uploads/15417092127723a243f0e122a400c54eaf6a9bda7c65095387/11a98349fb9e66f12a7a9cd0255ea9822d85ea5a.jpeg";
-$mainiUrl = 'http://ec2-54-212-58-90.us-west-2.compute.amazonaws.com/image2video';
+$mainiUrl = 'http://ec2-54-212-58-90.us-west-2.compute.amazonaws.com';
 $debug = '';
 
 ### read command line parameters
@@ -31,7 +31,7 @@ if (!$csvFile) {
     help("Need csv file with data. Can be defined with '--csv' option");
 }
 
-$apiUrl = "$mainiUrl/api";
+$apiUrl = "$mainiUrl/image2video/api";
 $apiKey = '315820';
 $dt = date("U");
 
@@ -283,10 +283,10 @@ function help($msg)
 	--logo http://logo - url of logo image
 	--audio http://audio - url of audio file
 	--splash http://splash - url of splash image
-    --url http://example.com/image2video - main url of image2video app
+    --url http://example.com - main url of your site
     --debug  show additional debug info
 
-	Example: $script --csv data.csv --logo http://localhost/logo.png --url http://ec2-54-212-58-90.us-west-2.compute.amazonaws.com/image2video
+	Example: $script --csv data.csv --logo http://localhost/logo.png --url http://ec2-54-212-58-90.us-west-2.compute.amazonaws.com
 	\n");
     exit(-1);
 }
