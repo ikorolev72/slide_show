@@ -78,7 +78,7 @@ function addText($apiUrl, $apiKey, $project_id, $id, $duration, $transition, $st
     return ($answer);
 }
 
-function prepareVideo($apiUrl, $apiKey, $project_id, $step)
+function prepareVideo($apiUrl, $apiKey, $project_id, $baseName, $step)
 {
 # 6. Prepare video
     # this mean prepare 'the command to make video'
@@ -88,6 +88,7 @@ function prepareVideo($apiUrl, $apiKey, $project_id, $step)
         "apikey" => $apiKey,
         "project_id" => $project_id,
         "action" => 'prepare',
+        "basename" => $baseName,
     );
     $answer = get_api_answer($url, $params, $step);
     return ($answer);

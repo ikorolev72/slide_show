@@ -27,6 +27,8 @@ $splashUrl = isset($options['splash']) ? $options['splash'] : $splashUrl;
 $mainiUrl = isset($options['url']) ? $options['url'] : $mainiUrl;
 $debug = isset($options['debug']) ? 1 : 0;
 
+
+
 if (!$csvFile) {
     help("Need csv file with data. Can be defined with '--csv' option");
 }
@@ -47,11 +49,19 @@ foreach ($csvArray as $csv) {
     if (!file_exists($csv)) {
         echo "File '$csv' do not exists\n";
         continue;
-    }
+    }    
     $dataArray = getCsv($csv);
     if (!$dataArray) {
         echo "Cannot read file '$csv' or file have incorrect format\n";
         exit(1);
+    }
+
+    $path_parts = pathinfo($csv);
+    $baseName=$path_parts['filename'];
+    $baseName=preg_replace('/\W/','_', $baseName) ;
+    $baseName="$baseName.mp4" ;
+    if ($debug) {    
+        echo "Used basename for output file: $baseName\n";
     }
 
 ########################################################################
@@ -70,7 +80,8 @@ foreach ($csvArray as $csv) {
 #echo "New project added : $project_id\n";
 
     $step++;
-    if ($debug) {echo "Step $step. Adding logo\n";
+    if ($debug) {
+        echo "Step $step. Adding logo\n";
     }
     $answer = addLogo($apiUrl, $apiKey, $project_id, $step, $logoUrl);
     if (!$answer) {
@@ -217,7 +228,7 @@ foreach ($csvArray as $csv) {
     if ($debug) {
         echo "Step $step. Prepare video command script\n";
     }
-    $answer = prepareVideo($apiUrl, $apiKey, $project_id, $step);
+    $answer = prepareVideo($apiUrl, $apiKey, $project_id, $baseName, $step);
     if (!$answer) {
         exit(1);
     }
