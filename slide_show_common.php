@@ -13,6 +13,19 @@ function addProject($apiUrl, $apiKey, $step, $projectName)
     return ($answer);
 }
 
+function setProject($apiUrl, $apiKey, $project_id, $step, $name, $value)
+{
+    $url = "$apiUrl/project.php";
+    $params = array(
+        "apikey" => $apiKey,
+        "project_id" => $project_id,        
+        "action" => 'set',
+        $name => $value,
+    );
+    $answer = get_api_answer($url, $params, $step);
+    return ($answer);
+}
+
 function addLogo($apiUrl, $apiKey, $project_id, $step, $srcUrl)
 {
     $url = "$apiUrl/logo.php";
@@ -55,7 +68,7 @@ function addImage($apiUrl, $apiKey, $project_id, $step, $srcUrl)
     return ($answer);
 }
 
-function addText($apiUrl, $apiKey, $project_id, $id, $duration, $transition, $step, $text, $text_align="bottom", $font_size=40)
+function addText($apiUrl, $apiKey, $project_id, $id, $duration, $transition, $step, $text, $text_align = "bottom", $font_size = 40)
 {
     $url = "$apiUrl/effect.php";
     $params = array(
@@ -200,6 +213,3 @@ function get_web_page($url, $params)
     $header['content'] = $content;
     return $header;
 }
-
-
-

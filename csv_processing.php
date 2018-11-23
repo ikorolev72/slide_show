@@ -97,6 +97,7 @@ foreach ($csvArray as $csv) {
         exit(1);
     }
 
+
     $id = 1;
     $foundEmptyLine = false;
     foreach ($dataArray as $data) {
@@ -109,6 +110,43 @@ foreach ($csvArray as $csv) {
             $mainImage = $data[1];
             continue;
         }
+        if (trim($data[0]) === "text_color") {
+            $text_color = $data[1];
+            $step++;
+            if ($debug) {
+                echo "Step $step. Set project bulk: text_color\n";
+            }
+            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "text_color", $text_color)  ;
+            if (!$answer) {
+                exit(1);
+            }                                  
+            continue;
+        }
+        if (trim($data[0]) === "text_boxborder_color") {
+            $text_boxborder_color = $data[1];
+            $step++;
+            if ($debug) {
+                echo "Step $step. Set project bulk: text_boxborder_color\n";
+            }
+            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "text_boxborder_color", $text_boxborder_color)  ;
+            if (!$answer) {
+                exit(1);
+            }                                  
+            continue;            
+        }
+        if (trim($data[0]) === "text_boxopacity") {
+            $text_boxopacity = $data[1];
+            $step++;
+            if ($debug) {
+                echo "Step $step. Set project bulk: text_boxopacity\n";
+            }
+            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "text_boxopacity", $text_boxopacity)  ;
+            if (!$answer) {
+                exit(1);
+            }             
+            continue;
+        }                
+
 
         if (trim($data[0]) === "") { // empty line
             $foundEmptyLine = true;
