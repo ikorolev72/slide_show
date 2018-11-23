@@ -140,7 +140,6 @@ foreach ($csvArray as $csv) {
             if ($debug) {
                 echo "Step $step. Set project bulk: text_boxopacity\n";
             }
-            echo var_dump($text_boxopacity);
             $answer = setProject($apiUrl, $apiKey, $project_id, $step, "text_boxopacity", intval( $text_boxopacity))  ;
             if (!$answer) {
                 exit(1);
