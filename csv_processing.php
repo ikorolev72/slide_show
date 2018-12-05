@@ -8,16 +8,20 @@ $audioUrl = "http://www.tldw.io/image2video/uploads/1541601782d3fa63b793871f791c
 $splashUrl = "http://ec2-54-212-58-90.us-west-2.compute.amazonaws.com/image2video/uploads/15417092127723a243f0e122a400c54eaf6a9bda7c65095387/11a98349fb9e66f12a7a9cd0255ea9822d85ea5a.jpeg";
 $mainiUrl = 'http://ec2-54-212-58-90.us-west-2.compute.amazonaws.com';
 $debug = '';
+$durationCaption = 4;
+$durationSubCaption = 8;
 
 ### read command line parameters
 $shortopts = "";
 $longopts = array(
-    "csv:", // Обязательное значение
-    "logo:", // Необязательное значение
-    "audio:", // Необязательное значение
-    "splash:", // Необязательное значение
-    "url:", // Необязательное значение
-    "debug::", // Необязательное значение
+    "csv:",
+    "logo:",
+    "audio:",
+    "splash:",
+    "url:",
+    "debug::",
+    "duration_caption:", // Необязательное значение
+    "duration_subcaption:", // Необязательное значение
 );
 $options = getopt($shortopts, $longopts);
 $csvFile = isset($options['csv']) ? $options['csv'] : '';
@@ -25,9 +29,10 @@ $logoUrl = isset($options['logo']) ? $options['logo'] : $logoUrl;
 $audioUrl = isset($options['audio']) ? $options['audio'] : $audioUrl;
 $splashUrl = isset($options['splash']) ? $options['splash'] : $splashUrl;
 $mainiUrl = isset($options['url']) ? $options['url'] : $mainiUrl;
+$durationCaption = isset($options['duration_caption']) ? $options['duration_caption'] : $durationCaption;
+$durationSubCaption = isset($options['duration_subcaption']) ? $options['duration_subcaption'] : $durationSubCaption;
+
 $debug = isset($options['debug']) ? 1 : 0;
-
-
 
 if (!$csvFile) {
     help("Need csv file with data. Can be defined with '--csv' option");
@@ -49,7 +54,7 @@ foreach ($csvArray as $csv) {
     if (!file_exists($csv)) {
         echo "File '$csv' do not exists\n";
         continue;
-    }    
+    }
     $dataArray = getCsv($csv);
     if (!$dataArray) {
         echo "Cannot read file '$csv' or file have incorrect format\n";
@@ -57,10 +62,10 @@ foreach ($csvArray as $csv) {
     }
 
     $path_parts = pathinfo($csv);
-    $baseName=$path_parts['filename'];
-    $baseName=preg_replace('/\W/','_', $baseName) ;
-    $baseName="$baseName.mp4" ;
-    if ($debug) {    
+    $baseName = $path_parts['filename'];
+    $baseName = preg_replace('/\W/', '_', $baseName);
+    $baseName = "$baseName.mp4";
+    if ($debug) {
         echo "Used basename for output file: $baseName\n";
     }
 
@@ -97,7 +102,6 @@ foreach ($csvArray as $csv) {
         exit(1);
     }
 
-
     $id = 1;
     $foundEmptyLine = false;
     foreach ($dataArray as $data) {
@@ -116,10 +120,10 @@ foreach ($csvArray as $csv) {
             if ($debug) {
                 echo "Step $step. Set project bulk: text_color\n";
             }
-            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "text_color", $text_color)  ;
+            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "text_color", $text_color);
             if (!$answer) {
                 exit(1);
-            }                                  
+            }
             continue;
         }
         if (trim($data[0]) === "text_boxborder_color") {
@@ -128,11 +132,11 @@ foreach ($csvArray as $csv) {
             if ($debug) {
                 echo "Step $step. Set project bulk: text_boxborder_color\n";
             }
-            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "text_boxborder_color", $text_boxborder_color)  ;
+            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "text_boxborder_color", $text_boxborder_color);
             if (!$answer) {
                 exit(1);
-            }                                  
-            continue;            
+            }
+            continue;
         }
         if (trim($data[0]) === "text_boxopacity") {
             $text_boxopacity = $data[1];
@@ -140,13 +144,12 @@ foreach ($csvArray as $csv) {
             if ($debug) {
                 echo "Step $step. Set project bulk: text_boxopacity\n";
             }
-            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "text_boxopacity", intval( $text_boxopacity))  ;
+            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "text_boxopacity", intval($text_boxopacity));
             if (!$answer) {
                 exit(1);
-            }             
+            }
             continue;
-        }                
-
+        }
 
         if (trim($data[0]) === "") { // empty line
             $foundEmptyLine = true;
@@ -162,7 +165,7 @@ foreach ($csvArray as $csv) {
             if ($debug) {
                 echo "Step $step. Adding title\n";
             }
-            $answer = addText($apiUrl, $apiKey, $project_id, $id, 4, 'fade', $step, strip_tags($title), 'center', 50);
+            $answer = addText($apiUrl, $apiKey, $project_id, $id, 4, 'fade', $step, strip_tags($title), 'center', 50, '');
             if (!$answer) {
                 exit(1);
             }
@@ -189,9 +192,15 @@ foreach ($csvArray as $csv) {
         $row["UnitImageSource2"] = $data[8];
         $row["UnitImageSourceUrl2"] = $data[9];
 
+
+        if ($debug) {
+            echo var_dump($row);
+        }       
+
 ########################################################################
 
         if ($row["Caption1"]) {
+     
             $step++;
             if ($debug) {
                 echo "Step $step. Adding image " . $row["Caption1"] . "\n";
@@ -206,7 +215,7 @@ foreach ($csvArray as $csv) {
             if ($debug) {
                 echo "Step $step. Adding text for " . $row["Caption1"] . "\n";
             }
-            $answer = addText($apiUrl, $apiKey, $project_id, $id, 4, 'fade', $step, strip_tags($row["Caption1"]), 'center', 50);
+            $answer = addText($apiUrl, $apiKey, $project_id, $id, $durationCaption, 'fade', $step, strip_tags($row["Caption1"]), 'center', 50, $row["UnitImageSource1"]);
             if (!$answer) {
                 // exit(1);
                 // do not stop processing if any upload images problems, go to next step
@@ -228,7 +237,7 @@ foreach ($csvArray as $csv) {
             if ($debug) {
                 echo "Step $step. Adding text for " . $row["Caption1"] . "\n";
             }
-            $answer = addText($apiUrl, $apiKey, $project_id, $id, 8, 'concat', $step, strip_tags($row["SubCaption1"]));
+            $answer = addText($apiUrl, $apiKey, $project_id, $id, $durationSubCaption, 'concat', $step, strip_tags($row["SubCaption1"]), "bottom", 40, $row["UnitImageSource1"]);
             if (!$answer) {
                 // exit(1);
                 // do not stop processing if any upload images problems, go to next step
@@ -326,16 +335,19 @@ function help($msg)
     $script = basename(__FILE__);
     fwrite(STDERR,
         "$msg
-	Usage: php $script --csv file.csv [--csv file1.csv [--csv file2.csv...]] [--logo http://logo] [--audio http://audio] [--splash http://splash] [--url http://example.com/image2video] [--debug]
+	Usage: php $script --csv file.csv [--csv file1.csv [--csv file2.csv...]] [--logo http://logo] [--audio http://audio] [--splash http://splash] [--url http://example.com/image2video] [--duration_caption 5] [--duration_caption 12] [--debug]
 	where:
 	--csv file.csv - csv file with data
 	--logo http://logo - url of logo image
 	--audio http://audio - url of audio file
 	--splash http://splash - url of splash image
     --url http://example.com - main url of your site
+    --duration_caption - duraton for Caption ( default 4 sec )
+    --duration_subcaption - duraton for subCaption ( default 8 sec )
     --debug  show additional debug info
 
-	Example: $script --csv data.csv --logo http://localhost/logo.png --url http://ec2-54-212-58-90.us-west-2.compute.amazonaws.com
+
+	Example: $script --csv data.csv --logo http://localhost/logo.png --url http://ec2-54-212-58-90.us-west-2.compute.amazonaws.com --duration_caption 5 --duration_subcaption 10
 	\n");
     exit(-1);
 }

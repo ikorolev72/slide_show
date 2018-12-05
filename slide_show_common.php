@@ -68,7 +68,7 @@ function addImage($apiUrl, $apiKey, $project_id, $step, $srcUrl)
     return ($answer);
 }
 
-function addText($apiUrl, $apiKey, $project_id, $id, $duration, $transition, $step, $text, $text_align = "bottom", $font_size = 40)
+function addText($apiUrl, $apiKey, $project_id, $id, $duration, $transition, $step, $text, $text_align = "bottom", $font_size = 40, $additional_text='' )
 {
     $url = "$apiUrl/effect.php";
     $params = array(
@@ -86,6 +86,7 @@ function addText($apiUrl, $apiKey, $project_id, $id, $duration, $transition, $st
         "text_boxopacity" => 50,
         "text_align" => $text_align,
         "crop_image" => 0,
+        "additional_text" => $additional_text,
     );
     $answer = get_api_answer($url, $params, $step);
     return ($answer);
