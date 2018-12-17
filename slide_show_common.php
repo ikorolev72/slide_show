@@ -18,7 +18,7 @@ function setProject($apiUrl, $apiKey, $project_id, $step, $name, $value)
     $url = "$apiUrl/project.php";
     $params = array(
         "apikey" => $apiKey,
-        "project_id" => $project_id,        
+        "project_id" => $project_id,
         "action" => 'set',
         $name => $value,
     );
@@ -68,8 +68,26 @@ function addImage($apiUrl, $apiKey, $project_id, $step, $srcUrl)
     return ($answer);
 }
 
-function addText($apiUrl, $apiKey, $project_id, $id, $duration, $transition, $step, $text, $text_align = "bottom", $font_size = 40, $additional_text='' )
-{
+function addText(
+    $apiUrl,
+    $apiKey,
+    $project_id,
+    $id,
+    $duration,
+    $transition,
+    $step,
+    $text,
+    $text_align = "bottom",
+    $font_size = 40,
+    $additional_text = '',
+    $text_effect = 'default',
+    $crop_image = 0,
+    $text_boxopacity = 50,
+    $font = '/usr/share/fonts/truetype/roboto/hinted/Roboto-Bold.ttf',
+    $text_color = 'FFFFFF',
+    $text_boxborder_color= 'FFFFFF',
+    $animation = 'none'
+) {
     $url = "$apiUrl/effect.php";
     $params = array(
         "apikey" => $apiKey,
@@ -77,16 +95,18 @@ function addText($apiUrl, $apiKey, $project_id, $id, $duration, $transition, $st
         "id" => $id,
         "action" => 'set',
         "text" => $text,
+        "text_color" => $text_color,
+        "font" => $font,
         "font_size" => $font_size,
+        "animation" => $animation,
+        "text_boxopacity" => $text_boxopacity,
+        "text_boxborder_color" => $text_boxborder_color,
+        "text_align" => $text_align,
+        "crop_image" => $crop_image,
+        "additional_text" => $additional_text,
+        "text_effect" => $text_effect,
         "duration" => $duration,
         "transition" => $transition,
-        "fade_in" => 0.5,
-        "fade_out" => 0.5,
-        "animation" => "none",
-        "text_boxopacity" => 50,
-        "text_align" => $text_align,
-        "crop_image" => 0,
-        "additional_text" => $additional_text,
     );
     $answer = get_api_answer($url, $params, $step);
     return ($answer);

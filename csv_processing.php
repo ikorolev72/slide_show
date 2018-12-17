@@ -8,10 +8,32 @@ $audioUrl = "http://www.tldw.io/image2video/uploads/1541601782d3fa63b793871f791c
 $splashUrl = "http://ec2-54-212-58-90.us-west-2.compute.amazonaws.com/image2video/uploads/15417092127723a243f0e122a400c54eaf6a9bda7c65095387/11a98349fb9e66f12a7a9cd0255ea9822d85ea5a.jpeg";
 $mainiUrl = 'http://ec2-54-212-58-90.us-west-2.compute.amazonaws.com';
 $debug = '';
+
 $durationCaption = 4;
 $durationSubCaption = 8;
-$font_size = 50;
-$duration_auto = 3;
+$caption = [];
+$caption['duration'] = 4;
+$caption['font_size'] = 50;
+$caption['font'] = '/usr/share/fonts/truetype/roboto/hinted/Roboto-Bold.ttf';
+$caption['text_color'] = 'FFFFFF';
+$caption['text_boxborder_color'] = 'FFFFFF';
+$caption['crop_image'] = 0;
+$caption['transition'] = 'fade';
+$caption['text_effect'] = 'default';
+$caption['text_align'] = 'center';
+$caption['additional_text'] = '';
+
+$subcaption = [];
+$subcaption['duration'] = 4;
+$subcaption['font_size'] = 50;
+$subcaption['font'] = '/usr/share/fonts/truetype/roboto/hinted/Roboto-Bold.ttf';
+$subcaption['text_color'] = 'FFFFFF';
+$subcaption['text_boxborder_color'] = 'FFFFFF';
+$subcaption['crop_image'] = 0;
+$subcaption['transition'] = 'none';
+$subcaption['text_effect'] = 'default';
+$subcaption['text_align'] = 'center';
+$subcaption['additional_text'] = '';
 
 ### read command line parameters
 $shortopts = "";
@@ -108,142 +130,165 @@ foreach ($csvArray as $csv) {
     $foundEmptyLine = false;
     foreach ($dataArray as $data) {
         // looking for empty first cell
-        if (trim($data[0]) === "Title") {
+        if (trim($data[0]) === "Title" || trim($data[0]) === "title") {
             $title = $data[1];
             continue;
         }
-        if (trim($data[0]) === "Main Image") {
+        if (trim($data[0]) === "Main Image" || trim($data[0]) === "main_image" || trim($data[0]) === "main_url") {
             $mainImage = $data[1];
             continue;
         }
+        if (trim($data[0]) === "audio_url") {
+            $audioUrl = $data[1];
+            continue;
+        }
+        if (trim($data[0]) === "splash_url") {
+            $splashUrl = $data[1];
+            continue;
+        }
+        if (trim($data[0]) === "logo_url") {
+            $logoUrl = $data[1];
+            continue;
+        }
+
         if (trim($data[0]) === "text_color") {
-            $text_color = $data[1];
+            $caption['text_color'] = $data[1];
+            $subcaption['text_color'] = $data[2];
             $step++;
             if ($debug) {
                 echo "Step $step. Set project bulk: text_color\n";
             }
-            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "text_color", $text_color);
+            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "text_color", $caption['text_color']);
             if (!$answer) {
                 exit(1);
             }
             continue;
         }
         if (trim($data[0]) === "text_boxborder_color") {
-            $text_boxborder_color = $data[1];
+            $caption['text_boxborder_color'] = $data[1];
+            $subcaption['text_boxborder_color'] = $data[2];
             $step++;
             if ($debug) {
                 echo "Step $step. Set project bulk: text_boxborder_color\n";
             }
-            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "text_boxborder_color", $text_boxborder_color);
+            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "text_boxborder_color", $caption['text_boxborder_color']);
             if (!$answer) {
                 exit(1);
             }
             continue;
         }
         if (trim($data[0]) === "text_boxopacity") {
-            $text_boxopacity = $data[1];
+            $caption['text_boxopacity'] = $data[1];
+            $subcaption['text_boxopacity'] = $data[2];
             $step++;
             if ($debug) {
                 echo "Step $step. Set project bulk: text_boxopacity\n";
             }
-            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "text_boxopacity", intval($text_boxopacity));
+            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "text_boxopacity", intval($caption['text_boxopacity']));
             if (!$answer) {
                 exit(1);
             }
             continue;
         }
         if (trim($data[0]) === "font_size") {
-            $font_size = $data[1];
+            $caption['font_size'] = $data[1];
+            $subcaption['font_size'] = $data[2];
             $step++;
             if ($debug) {
                 echo "Step $step. Set project bulk: font_size\n";
             }
-            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "font_size", intval($font_size));
+            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "font_size", intval($caption['font_size']));
             if (!$answer) {
                 exit(1);
             }
             continue;
         }
         if (trim($data[0]) === "duration_auto") {
-            $duration_auto = $data[1];
+            $caption['duration_auto'] = $data[1];
+            $subcaption['duration_auto'] = $data[2];
             $step++;
             if ($debug) {
                 echo "Step $step. Set project bulk: duration_auto\n";
             }
-            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "duration_auto", floatval($duration_auto));
+            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "duration_auto", floatval($caption['duration_auto']));
             if (!$answer) {
                 exit(1);
             }
             continue;
         }
         if (trim($data[0]) === "crop_image") {
-            $crop_image = $data[1] ? 1 : 0;
+            $caption['crop_image'] = $data[1] ? 1 : 0;
+            $subcaption['crop_image'] = $data[2] ? 1 : 0;
             $step++;
             if ($debug) {
                 echo "Step $step. Set project bulk: crop_image\n";
             }
-            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "crop_image", intval($crop_image));
+            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "crop_image", intval($caption['crop_image']));
             if (!$answer) {
                 exit(1);
             }
             continue;
         }
         if (trim($data[0]) === "transition") {
-            $transition = $data[1];
+            $caption['transition'] = $data[1];
+            $subcaption['transition'] = $data[2];
             $step++;
             if ($debug) {
                 echo "Step $step. Set project bulk: transition\n";
             }
-            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "transition", $transition);
+            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "transition", 'none');
             if (!$answer) {
                 exit(1);
             }
             continue;
         }
         if (trim($data[0]) === "text_effect") {
-            $text_effect = $data[1];
+            $caption['text_effect'] = $data[1];
+            $subcaption['text_effect'] = $data[2];
             $step++;
             if ($debug) {
                 echo "Step $step. Set project bulk: text_effect\n";
             }
-            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "text_effect", $text_effect);
+            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "text_effect", $caption['text_effect']);
             if (!$answer) {
                 exit(1);
             }
             continue;
         }
         if (trim($data[0]) === "text_align") {
-            $text_align = $data[1];
+            $caption['text_align'] = $data[1];
+            $subcaption['text_align'] = $data[2];
             $step++;
             if ($debug) {
                 echo "Step $step. Set project bulk: text_align\n";
             }
-            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "text_align", $text_align);
+            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "text_align", $caption['text_align']);
             if (!$answer) {
                 exit(1);
             }
             continue;
         }
         if (trim($data[0]) === "additional_text") {
-            $additional_text = $data[1];
+            $caption['additional_text'] = $data[1];
+            $subcaption['additional_text'] = $data[2];
             $step++;
             if ($debug) {
                 echo "Step $step. Set project bulk: additional_text\n";
             }
-            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "additional_text", $additional_text);
+            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "additional_text", $caption['additional_text']);
             if (!$answer) {
                 exit(1);
             }
             continue;
         }
-        if (trim($data[0]) === "duration_caption") {
+        if (trim($data[0]) === "duration") {
             $durationCaption = floatval($data[1]);
-            $durationCaption = ($durationCaption < 3) ? $durationCaption : 3;
-            continue;
-        }
-        if (trim($data[0]) === "duration_subcaption") {
-            $durationSubCaption = floatval($data[1]);
-            $durationSubCaption = ($durationSubCaption < 3) ? $durationSubCaption : 3;
+            $durationSubCaption = floatval($data[2]);
+            $caption['duration'] = floatval($data[1]);
+            $subcaption['duration'] = floatval($data[2]);
+
+            $caption['duration'] = ($caption['duration'] < 3) ? 3 : $caption['duration'];
+            $subcaption['duration'] = ($subcaption['duration'] < 3) ? 3 : $subcaption['duration'];
             continue;
         }
 
@@ -307,11 +352,34 @@ foreach ($csvArray as $csv) {
                 continue;
             }
             $step++;
-            $durationCaption = $duration_auto ? ($duration_auto * intval((strlen(strip_tags($row["Caption1"])) / 35) + 1)) : $durationCaption;
+            $durationCaption = $caption['duration_auto'] ? ($caption['duration_auto'] * intval((strlen(strip_tags($row["Caption1"])) / 35) + 1)) : $caption['duration'];
+            if(!$row["UnitImageSource1"] ) {
+                $row["UnitImageSource1"]= $caption['additional_text'] ;
+            }
             if ($debug) {
                 echo "Step $step. Adding text for " . $row["Caption1"] . ". Duration $durationCaption\n";
             }
-            $answer = addText($apiUrl, $apiKey, $project_id, $id, $durationCaption, 'fade', $step, strip_tags($row["Caption1"]), 'center', $font_size, $row["UnitImageSource1"]);
+            //$answer = addText($apiUrl, $apiKey, $project_id, $id, $durationCaption,$caption['transition'], $step, strip_tags($row["Caption1"]), $caption['text_align'], $caption['font_size'], $row["UnitImageSource1"]);
+            $answer = addText(
+                $apiUrl,
+                $apiKey,
+                $project_id,
+                $id,
+                $durationCaption,
+                $caption['transition'],
+                $step,
+                strip_tags($row["Caption1"]),
+                $caption['text_align'],
+                $caption['font_size'],
+                $row["UnitImageSource1"],
+                $caption['text_effect'],
+                $caption['crop_image'],
+                $caption['text_boxopacity'],
+                $caption['font'],
+                $caption['text_color'],
+                $caption['text_boxborder_color'],
+                'none'
+            );
             if (!$answer) {
                 // exit(1);
                 // do not stop processing if any upload images problems, go to next step
@@ -330,11 +398,35 @@ foreach ($csvArray as $csv) {
                 continue;
             }
             $step++;
-            $durationSubCaption = $duration_auto ? ($duration_auto * intval((strlen(strip_tags($row["SubCaption1"])) / 35) + 1)) : $durationSubCaption;
+            $durationSubCaption = $subcaption['duration_auto'] ? ($subcaption['duration_auto'] * intval((strlen(strip_tags($row["SubCaption1"])) / 35) + 1)) : $subcaption['duration'];
+            if(!$row["UnitImageSource1"] ) {
+                $row["UnitImageSource1"]= $subcaption['additional_text'] ;
+            }
+
             if ($debug) {
                 echo "Step $step. Adding text for " . $row["Caption1"] . ". Duration $durationSubCaption\n";
             }
-            $answer = addText($apiUrl, $apiKey, $project_id, $id, $durationSubCaption, 'concat', $step, strip_tags($row["SubCaption1"]), "bottom", $font_size - 5, $row["UnitImageSource1"]);
+            //$answer = addText($apiUrl, $apiKey, $project_id, $id, $durationCaption,$subcaption['transition'], $step, strip_tags($row["Caption2"]), $subcaption['text_align'], $subcaption['font_size'], $row["UnitImageSource1"]);
+            $answer = addText(
+                $apiUrl,
+                $apiKey,
+                $project_id,
+                $id,
+                $durationSubCaption,
+                $subcaption['transition'],
+                $step,
+                strip_tags($row["SubCaption1"]),
+                $subcaption['text_align'],
+                $subcaption['font_size'],
+                $row["UnitImageSource1"],
+                $subcaption['text_effect'],
+                $subcaption['crop_image'],
+                $subcaption['text_boxopacity'],
+                $subcaption['font'],
+                $subcaption['text_color'],
+                $subcaption['text_boxborder_color'],
+                'none'
+            );
             if (!$answer) {
                 // exit(1);
                 // do not stop processing if any upload images problems, go to next step
