@@ -10,6 +10,8 @@ $mainiUrl = 'http://ec2-54-212-58-90.us-west-2.compute.amazonaws.com';
 $debug = '';
 $durationCaption = 4;
 $durationSubCaption = 8;
+$font_size = 50;
+$duration_auto = 3;
 
 ### read command line parameters
 $shortopts = "";
@@ -150,6 +152,100 @@ foreach ($csvArray as $csv) {
             }
             continue;
         }
+        if (trim($data[0]) === "font_size") {
+            $font_size = $data[1];
+            $step++;
+            if ($debug) {
+                echo "Step $step. Set project bulk: font_size\n";
+            }
+            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "font_size", intval($font_size));
+            if (!$answer) {
+                exit(1);
+            }
+            continue;
+        }
+        if (trim($data[0]) === "duration_auto") {
+            $duration_auto = $data[1];
+            $step++;
+            if ($debug) {
+                echo "Step $step. Set project bulk: duration_auto\n";
+            }
+            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "duration_auto", floatval($duration_auto));
+            if (!$answer) {
+                exit(1);
+            }
+            continue;
+        }
+        if (trim($data[0]) === "crop_image") {
+            $crop_image = $data[1] ? 1 : 0;
+            $step++;
+            if ($debug) {
+                echo "Step $step. Set project bulk: crop_image\n";
+            }
+            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "crop_image", intval($crop_image));
+            if (!$answer) {
+                exit(1);
+            }
+            continue;
+        }
+        if (trim($data[0]) === "transition") {
+            $transition = $data[1];
+            $step++;
+            if ($debug) {
+                echo "Step $step. Set project bulk: transition\n";
+            }
+            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "transition", $transition);
+            if (!$answer) {
+                exit(1);
+            }
+            continue;
+        }
+        if (trim($data[0]) === "text_effect") {
+            $text_effect = $data[1];
+            $step++;
+            if ($debug) {
+                echo "Step $step. Set project bulk: text_effect\n";
+            }
+            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "text_effect", $text_effect);
+            if (!$answer) {
+                exit(1);
+            }
+            continue;
+        }
+        if (trim($data[0]) === "text_align") {
+            $text_align = $data[1];
+            $step++;
+            if ($debug) {
+                echo "Step $step. Set project bulk: text_align\n";
+            }
+            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "text_align", $text_align);
+            if (!$answer) {
+                exit(1);
+            }
+            continue;
+        }
+        if (trim($data[0]) === "additional_text") {
+            $additional_text = $data[1];
+            $step++;
+            if ($debug) {
+                echo "Step $step. Set project bulk: additional_text\n";
+            }
+            $answer = setProject($apiUrl, $apiKey, $project_id, $step, "additional_text", $additional_text);
+            if (!$answer) {
+                exit(1);
+            }
+            continue;
+        }
+        if (trim($data[0]) === "duration_caption") {
+            $durationCaption = floatval($data[1]);
+            $durationCaption = ($durationCaption < 3) ? $durationCaption : 3;
+            continue;
+        }
+        if (trim($data[0]) === "duration_subcaption") {
+            $durationSubCaption = floatval($data[1]);
+            $durationSubCaption = ($durationSubCaption < 3) ? $durationSubCaption : 3;
+            continue;
+        }
 
         if (trim($data[0]) === "") { // empty line
             $foundEmptyLine = true;
@@ -192,15 +288,14 @@ foreach ($csvArray as $csv) {
         $row["UnitImageSource2"] = $data[8];
         $row["UnitImageSourceUrl2"] = $data[9];
 
-
         if ($debug) {
             echo var_dump($row);
-        }       
+        }
 
 ########################################################################
 
         if ($row["Caption1"]) {
-     
+
             $step++;
             if ($debug) {
                 echo "Step $step. Adding image " . $row["Caption1"] . "\n";
@@ -212,10 +307,11 @@ foreach ($csvArray as $csv) {
                 continue;
             }
             $step++;
+            $durationCaption = $duration_auto ? ($duration_auto * intval((strlen(strip_tags($row["Caption1"])) / 35) + 1)) : $durationCaption;
             if ($debug) {
-                echo "Step $step. Adding text for " . $row["Caption1"] . "\n";
+                echo "Step $step. Adding text for " . $row["Caption1"] . ". Duration $durationCaption\n";
             }
-            $answer = addText($apiUrl, $apiKey, $project_id, $id, $durationCaption, 'fade', $step, strip_tags($row["Caption1"]), 'center', 50, $row["UnitImageSource1"]);
+            $answer = addText($apiUrl, $apiKey, $project_id, $id, $durationCaption, 'fade', $step, strip_tags($row["Caption1"]), 'center', $font_size, $row["UnitImageSource1"]);
             if (!$answer) {
                 // exit(1);
                 // do not stop processing if any upload images problems, go to next step
@@ -234,10 +330,11 @@ foreach ($csvArray as $csv) {
                 continue;
             }
             $step++;
+            $durationSubCaption = $duration_auto ? ($duration_auto * intval((strlen(strip_tags($row["SubCaption1"])) / 35) + 1)) : $durationSubCaption;
             if ($debug) {
-                echo "Step $step. Adding text for " . $row["Caption1"] . "\n";
+                echo "Step $step. Adding text for " . $row["Caption1"] . ". Duration $durationSubCaption\n";
             }
-            $answer = addText($apiUrl, $apiKey, $project_id, $id, $durationSubCaption, 'concat', $step, strip_tags($row["SubCaption1"]), "bottom", 40, $row["UnitImageSource1"]);
+            $answer = addText($apiUrl, $apiKey, $project_id, $id, $durationSubCaption, 'concat', $step, strip_tags($row["SubCaption1"]), "bottom", $font_size - 5, $row["UnitImageSource1"]);
             if (!$answer) {
                 // exit(1);
                 // do not stop processing if any upload images problems, go to next step
